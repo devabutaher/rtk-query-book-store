@@ -31,7 +31,7 @@ const BookCard = () => {
   ];
 
   return (
-    <div className="order-2 xl:-order-1 py-4 px-4 xl:px-8">
+    <div className="order-2 xl:-order-1">
       <div className="flex items-center justify-between mb-12">
         <h4 className="mt-2 text-xl font-bold">Book List</h4>
 
