@@ -1,8 +1,17 @@
+import { useDispatch } from "react-redux";
+import { searchBook } from "../redux/books/bookSlice";
+
 const Navbar = () => {
+  const dispatch = useDispatch();
+
+  const handleSearch = (value) => {
+    dispatch(searchBook(value));
+  };
+
   return (
     <nav className="py-4 2xl:px-6">
       <div className="container flex items-center justify-between">
-        <h1 className="text-xl md:text-2xl font-bold">
+        <h1 className="text-xl font-bold md:text-2xl">
           NEXT<span className="text-slate-400">STORE</span>
         </h1>
 
@@ -27,6 +36,7 @@ const Navbar = () => {
               ></path>
             </svg>
             <input
+              onChange={(e) => handleSearch(e.target.value)}
               type="text"
               placeholder="Filter books..."
               className="search"

@@ -60,3 +60,4 @@ export const {
   useEditBookMutation,
   useDeleteBookMutation,
 } = apiSlice;
+export default apiSlice;
