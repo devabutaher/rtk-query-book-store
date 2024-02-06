@@ -1,12 +1,18 @@
 import { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { useGetBooksQuery } from "../redux/books/apiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  useDeleteBookMutation,
+  useGetBooksQuery,
+} from "../redux/books/apiSlice";
+import { editBookData } from "../redux/books/bookSlice";
 
 const BookCard = () => {
-  const [isFeatured, setIsFeatured] = useState(true);
+  const [isFeatured, setIsFeatured] = useState(false);
   const { search } = useSelector((state) => state.books);
+  const dispatch = useDispatch();
 
   const { data: books = [], isLoading, isError } = useGetBooksQuery();
+  const [deleteBook] = useDeleteBookMutation();
 
   const filteredBooks = useMemo(
     () =>
@@ -18,6 +24,14 @@ const BookCard = () => {
       }),
     [books, isFeatured, search]
   );
+
+  const handleEdit = (data) => {
+    dispatch(editBookData(data));
+  };
+
+  const handleDelete = (id) => {
+    deleteBook(id);
+  };
 
   return (
     <div className="order-2 xl:-order-1">
@@ -65,7 +79,10 @@ const BookCard = () => {
                     <span></span>
                   )}
                   <div className="space-x-2 text-gray-500">
-                    <button className="lws-edit">
+                    <button
+                      className="lws-edit"
+                      onClick={() => handleEdit(book)}
+                    >
                       <svg
                         fill="none"
                         viewBox="0 0 24 24"
@@ -80,7 +97,10 @@ const BookCard = () => {
                         />
                       </svg>
                     </button>
-                    <button className="lws-delete">
+                    <button
+                      className="lws-delete"
+                      onClick={() => handleDelete(book.id)}
+                    >
                       <svg
                         fill="none"
                         viewBox="0 0 24 24"

@@ -1,12 +1,30 @@
+import { useDispatch, useSelector } from "react-redux";
+import {
+  useAddBookMutation,
+  useEditBookMutation,
+} from "../redux/books/apiSlice";
+import { editBookData } from "../redux/books/bookSlice";
+
 const Form = () => {
-  const editBook = {
-    name: "test",
-    author: "test",
-    price: 0,
-    rating: 0,
-    thumbnail: "test",
-    featured: false,
-  };
+  const [
+    addBook,
+    {
+      isLoading: addBookLoading,
+      isError: addBookError,
+      isSuccess: addBookSuccess,
+    },
+  ] = useAddBookMutation();
+  const [
+    editBook,
+    {
+      isLoading: editBookLoading,
+      isError: editBookError,
+      isSuccess: editBookSuccess,
+    },
+  ] = useEditBookMutation();
+
+  const { editData } = useSelector((state) => state.books);
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,20 +39,25 @@ const Form = () => {
       featured: form.featured.checked,
     };
 
-    console.log("data:", data);
+    if (editData.id) {
+      editBook({ id: editData.id, data });
+      dispatch(editBookData({}));
+    } else {
+      addBook(data);
+    }
 
     form.reset();
   };
 
   return (
-    <div className="p-4 overflow-hidden bg-white rounded-md shadow-cardShadow">
+    <div className="p-4 overflow-hidden bg-white rounded-md shadow-cardShadow place-self-start">
       <h4 className="mb-8 text-xl font-bold text-center">Add New Book</h4>
       <form className="book-form" onSubmit={handleSubmit}>
         <div className="space-y-2">
           <label htmlFor="name">Book Name</label>
           <input
             required
-            defaultValue={editBook?.name ?? ""}
+            defaultValue={editData?.name ?? ""}
             className="text-input"
             type="text"
             id="input-Bookname"
@@ -46,7 +69,7 @@ const Form = () => {
           <label htmlFor="category">Author</label>
           <input
             required
-            defaultValue={editBook?.author ?? ""}
+            defaultValue={editData?.author ?? ""}
             className="text-input"
             type="text"
             id="input-Bookauthor"
@@ -58,7 +81,7 @@ const Form = () => {
           <label htmlFor="image">Image Url</label>
           <input
             required
-            defaultValue={editBook?.thumbnail ?? ""}
+            defaultValue={editData?.thumbnail ?? ""}
             className="text-input"
             type="text"
             id="input-Bookthumbnail"
@@ -71,7 +94,7 @@ const Form = () => {
             <label htmlFor="price">Price</label>
             <input
               required
-              defaultValue={editBook?.price ?? ""}
+              defaultValue={editData?.price ?? ""}
               className="text-input"
               type="number"
               id="input-Bookprice"
@@ -83,7 +106,7 @@ const Form = () => {
             <label htmlFor="quantity">Rating</label>
             <input
               required
-              defaultValue={editBook?.rating ?? ""}
+              defaultValue={editData?.rating ?? ""}
               className="text-input"
               type="number"
               id="input-Bookrating"
@@ -96,20 +119,41 @@ const Form = () => {
 
         <div className="flex items-center">
           <input
-            defaultChecked={editBook?.featured ?? ""}
-            id="input-Bookfeatured"
+            defaultChecked={editData?.featured ?? ""}
+            id="input-BookFeatured"
             type="checkbox"
             name="featured"
             className="w-4 h-4"
           />
-          <label htmlFor="input-Bookfeatured" className="ml-2 text-sm">
+          <label htmlFor="input-BookFeatured" className="ml-2 text-sm">
             This is a featured book
           </label>
         </div>
 
         <button type="submit" className="submit" id="submit">
-          {editBook !== null ? "Update Book" : "Add Book"}
+          {addBookLoading || editBookLoading
+            ? "Loading..."
+            : editData.id
+            ? "Update Book"
+            : "Add Book"}
         </button>
+
+        {addBookSuccess && (
+          <p className="py-1 text-center text-green-500">
+            Book added successfully!
+          </p>
+        )}
+        {editBookSuccess && (
+          <p className="py-1 text-center text-green-500">
+            Book edited successfully!
+          </p>
+        )}
+        {addBookError && (
+          <p className="py-1 text-center text-red-500">Book added failed!</p>
+        )}
+        {editBookError && (
+          <p className="py-1 text-center text-red-500">Book edited failed!</p>
+        )}
       </form>
     </div>
   );

@@ -16,35 +16,32 @@ const apiSlice = createApi({
 
     getBook: builder.query({
       query: (id) => `/books/${id}`,
-      providesTags: (result, error, arg) => [{ type: "Book", id: arg }],
+      providesTags: (result) => [{ type: "Book", id: result.id }],
     }),
 
     addBook: builder.mutation({
       query: (data) => ({
-        url: "/videos",
+        url: "/books",
         method: "POST",
         body: data,
       }),
 
-      invalidatesTags: ["Book"],
+      invalidatesTags: ["Books"],
     }),
 
     editBook: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/videos/${id}`,
+        url: `/books/${id}`,
         method: "PUT",
         body: data,
       }),
 
-      invalidatesTags: (result, error, arg) => [
-        "Books",
-        { type: "Book", id: arg.id },
-      ],
+      invalidatesTags: (result) => ["Books", { type: "Book", id: result.id }],
     }),
 
     deleteBook: builder.mutation({
       query: (id) => ({
-        url: `/videos/${id}`,
+        url: `/books/${id}`,
         method: "DELETE",
       }),
 
